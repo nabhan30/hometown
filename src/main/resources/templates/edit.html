@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico"/>
+
+    <title>Detail</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../static/css/bootstrap.css" rel="stylesheet" th:href="@{/css/bootstrap.css}"/>
+</head>
+<body>
+	<%@include file="navigationUser.jsp"%>
+	<%
+		Information inf = (Information) request.getAttribute("information");
+	%>
+	<div class="container">
+		<form method="POST" action="UpdateInformation" enctype="multipart/form-data">
+			<div class="form-row">
+				<input type="hidden" name="id_information"
+					value="${information.id_information }">
+				<div class="form-group col-md-6">
+					<label for="inputNameDestination">Name of Destination or
+						Event</label> <input class="form-control" type="text" name="title"
+						value="${information.title }">
+				</div>
+				<div class="form-group col-md-6">
+					<label for="inputCategory">Category</label>
+					<div class="form-group">
+						<select class="form-control" name="category">
+							<%
+								String category = "";
+								if (inf.getCategory() != null) {
+									category = inf.getCategory();
+								}
+								if (category.equals("event")) {
+									out.println("<option value='event'>Event</option>");
+								} else if (category.equals("destination")) {
+									out.println("<option value='destination'>Destination</option>");
+								}
+							%>
+							<option value="event">Event</option>
+							<option value="destination">Destination</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="description">Description</label>
+				<textarea class="form-control" name="description" rows="20">${information.description }</textarea>
+			</div>
+			<div class="form-row">
+				<div class="form-group">
+					<label for="image">Upload Image</label>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<div class="custom-file">
+						<input type="file" class="custom-file-input" name="header">
+						<label class="custom-file-label" for="customFile">Header
+							Image</label>
+					</div>
+				</div>
+				<div class="form-group col-md-6">
+					<div class="custom-file">
+						<input type="file" class="custom-file-input" name="album" multiple="multiple">
+						<label class="custom-file-label" for="customFile">Highlight
+							Image</label>
+					</div>
+				</div>
+			</div>
+			<input class="btn btn-primary rounded-pill" type="submit"
+				value="Submit">
+		</form>
+	</div>
+</body>
+<script>
+	CKEDITOR.replace('description', {
+
+	});
+</script>
+</html>

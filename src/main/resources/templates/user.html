@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico"/>
+
+    <title>User</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../static/css/bootstrap.css" rel="stylesheet" th:href="@{/css/bootstrap.css}"/>
+</head>
+<body>
+	<%@include file="navigationUser.jsp" %>
+	
+	<div class="d-flex flex-row py-3 container overflow-auto">
+		<div class="col-md-3 col-sm-3 py-3 bg-light mr-3">
+			<ul class="float-left">
+				<li class="nav-item"><button class="btn navbar-btn"
+						type="button" onclick="showContents('profile')">My
+						profile</button></li>
+				<li class="nav-item"><button class="btn navbar-btn"
+						type="button" onclick="showContents('task_post')">Post
+						Information</button></li>
+				<li class="nav-item"><button class="btn navbar-btn"
+						type="button" onclick="showContents('task_offered')">Information
+						Posted</button></li>
+			</ul>
+		</div>
+
+		<!-- halaman profile -->
+		<div class="col content bg-light overflow-auto" id="profile">
+			<div class="fadein">
+				<h3 class="text-center m-3 py-3">My Profile</h3>
+			</div>
+			<%
+				if (request.getAttribute("users") == null) {
+					request.setAttribute("users", "profile.png");
+				}
+			%>
+			<form method="POST" action="UpdateUser" enctype="multipart/form-data">
+				<div class="d-flex flex-row">
+					<div class="col-sm-4 text-center">
+						<input type="hidden" name="id_user" value="${userLogin.id_user }">
+						<p>
+							Upload Profile<input type="file" class="custom-file-input btn"
+								name="profile">
+						</p>
+						<img style="width: 50%;" class="img-fluid rounded-circle"
+							src="images/${userLogin.profile }">
+					</div>
+					<div class="col">
+						<div class="form-group">
+							<label>First Name</label><input class="form-control" type="text"
+								name="firstName" value="${userLogin.first_name }" />
+						</div>
+						<div class="form-group">
+							<label>Last Name</label><input class="form-control" type="text"
+								name="lastName" value="${userLogin.last_name }" />
+						</div>
+						<div class="form-group">
+							<label>Email</label><input class="form-control" type="email"
+								name="email" value="${userLogin.email }" />
+						</div>
+						<div class="form-group">
+							<label>Username</label><input class="form-control" type="text"
+								name="username" value="${userLogin.username }" />
+						</div>
+						<div class="form-group">
+							<label>Password</label><input class="form-control"
+								type="password" name="password" value="${userLogin.password }" />
+						</div>
+						<div class="form-group text-center">
+							<input class="btn btn-success rounded-pill" type="submit"
+								value="Update">
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<!-- halaman post information -->
+		<div class="col content bg-light" id="task_post">
+			<div class="fadein">
+				<h3 class="text-center m-3 py-3">Post Information</h3>
+			</div>
+			<form method="POST" action="AddInformation" enctype="multipart/form-data">
+				<div class="form-row">
+					<div class="form-group col-md-6">
+						<label for="inputNameDestination">Name of Destination or
+							Event</label> <input type="text" class="form-control" name="title"
+							placeholder="Input here">
+					</div>
+					<div class="form-group col-md-6">
+						<label for="inputCategory">Category</label>
+						<div class="form-group">
+							<select class="form-control" name="category">
+								<option value="" selected disabled>Select Category</option>
+								<option value="event">Event</option>
+								<option value="destination">Destination</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="description">Description</label>
+					<textarea class="form-control" name="description" rows="20"></textarea>
+				</div>
+				<div class="form-row">
+					<div class="form-group">
+						<label>Upload Image</label>
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-group col-md-6">
+						<div class="custom-file">
+							<input type="file" class="custom-file-input" name="image">
+							<label class="custom-file-label" for="customFile"></label>
+						</div>
+					</div>
+					<div class="form-group col-md-6">
+						<div class="custom-file">
+							<input type="file" class="custom-file-input"
+								name="header" multiple="multiple"> <label class="custom-file-label"
+								for="customFile">Highlight Image</label>
+						</div>
+					</div>
+				</div>
+				<input class="btn btn-primary rounded-pill" type="submit"
+					value="Submit">
+			</form>
+		</div>
+
+		<!-- halaman information tang telah di post -->
+		<div class="col content bg-light" id="task_offered">
+			<div class="fadein">
+				<h3 class="text-center m-3 py-3">Edit/Delete Information</h3>
+			</div>
+			<form method="get" action="UserPost">
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">Number</th>
+							<th scope="col">Title</th>
+							<th scope="col">Category</th>
+							<th scope="col">Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						<%
+							int i = 1;
+						%>
+						<c:forEach var="information" items="${informations}">
+							<tr>
+								<td><%=i%></td>
+								<td>${information.title}</td>
+								<td>${information.category}</td>
+								<td><a href="EditInformation?id_information=${information.id_information }">EDIT</a>
+									| <a href="DeleteInformation?id_information=${information.id_information }">DELETE</a></td>
+							<tr>
+								<%
+									i++;
+								%>
+						</c:forEach>
+					</tbody>
+				</table>
+			</form>
+			<div class="fadein">
+				<h3 class="text-center m-3 py-3">Posted Information</h3>
+			</div>
+			<div class="row">
+				<c:forEach var="information" items="${informations}">
+					<div class="col-md-4 mb-5">
+						<a href="DetailInformation?id_information=${information.id_information }">
+							<div class="card">
+								<img class="card-img-top img-fluid" src="images/${information.image }">
+								<div class="card-body">
+									<h5 class="card-title text-dark">
+										<c:out value="${information.title }"></c:out>
+									</h5>
+								</div>
+							</div>
+						</a>
+					</div>
+				</c:forEach>
+			</div>
+		</div>
+	</div>
+</body>
+<script>
+	showContents("profile");
+	CKEDITOR.replace('description', {
+		
+	});
+</script>
+</html>
